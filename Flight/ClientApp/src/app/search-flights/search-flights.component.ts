@@ -21,6 +21,11 @@ export class SearchFlightsComponent {
   }
 
   private handleError(err: any) {
+    if (err.status != 200) {
+      alert("An error occured")
+    }
+    console.log("Response error. Status: " + err.status)
+    console.log("Response error. Status Text: " + err.statusText)
     console.log(err)
   }
 }
