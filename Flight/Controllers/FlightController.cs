@@ -1,6 +1,7 @@
 ﻿using System;
 using Flight.ReadModels;
 using Microsoft.AspNetCore.Mvc;
+using Flight.Dtos;
 
 namespace Flight.Controllers
 {
@@ -64,6 +65,8 @@ namespace Flight.Controllers
                     random.Next(1, 853))
         };
 
+        static private IList<BookDto> Bookings = new List<BookDto>();
+
         public FlightController(ILogger<FlightController> logger)
         {
             _logger = logger;
@@ -88,6 +91,22 @@ namespace Flight.Controllers
                 return NotFound();
 
             return Ok(flight);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200)]
+        public IActionResult Book(BookDto dto)
+        {
+            var flightFound = flights.Any(f => f.Id == dto.FlightId);
+
+            if (flightFound == false)
+                return NotFound();
+
+            Bookings.Add(dto);
+            return CreatedAtAction(nameof(Find), new { id = dto.FlightId });
         }
     };
 }
