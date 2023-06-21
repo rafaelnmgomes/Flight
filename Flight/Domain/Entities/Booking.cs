@@ -1,8 +1,4 @@
 ﻿namespace Flight.Domain.Entities
 {
-    public record Booking(
-        Guid FlightId,
-        string PassengerEmail,
-        byte NumberOfSeats);
-
+    public record Booking(string PassengerEmail, byte NumberOfSeats);
 }
