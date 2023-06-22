@@ -1,7 +1,9 @@
 ﻿using Flight.Data;
+using Flight.Domain.Entities;
 using Flight.Domain.Errors;
 using Flight.Dtos;
 using Flight.ReadModels;
+using Flights.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,8 +27,29 @@ namespace Flight.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [ProducesResponseType(typeof(IEnumerable<FlightRm>), 200)]
-        public IEnumerable<FlightRm> Search()
+        public IEnumerable<FlightRm> Search([FromQuery] FlightSearchParameters @params)
         {
+            _logger.LogInformation("Searching for a flight for: {Destination}", @params.Destination);
+
+            IQueryable<FlightInfo> flights = _entities.Flights;
+
+            if (!string.IsNullOrWhiteSpace(@params.Destination))
+                flights = flights.Where(f => f.Arrival.Place.Contains(@params.Destination));
+
+            if (!string.IsNullOrWhiteSpace(@params.From))
+                flights = flights.Where(f => f.Departure.Place.Contains(@params.From));
+
+            if (@params.FromDate != null)
+                flights = flights.Where(f => f.Departure.Time >= @params.FromDate.Value.Date);
+
+            if (@params.ToDate != null)
+                flights = flights.Where(f => f.Departure.Time >= @params.ToDate.Value.Date.AddDays(1).AddTicks(-1));
+
+            if (@params.NumberOfPassengers != 0 && @params.NumberOfPassengers != null)
+                flights = flights.Where(f => f.RemainingNumberOfSeats >= @params.NumberOfPassengers);
+            else
+                flights = flights.Where(f => f.RemainingNumberOfSeats >= 1);
+
             var flightRmList = _entities.Flights.Select(flight => new FlightRm(
                 flight.Id,
                 flight.Airline,
