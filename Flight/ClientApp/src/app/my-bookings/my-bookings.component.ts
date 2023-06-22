@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { BookingRm, BookDto } from '../api/models';
 import { BookingService } from '../api/services/booking.service';
 import { AuthService } from '../auth/auth.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-bookings',
@@ -12,13 +11,9 @@ import { Router } from '@angular/router';
 export class MyBookingsComponent implements OnInit {
   bookings!: BookingRm[];
 
-  constructor(private bookingService: BookingService, private authService: AuthService, private router: Router) { }
+  constructor(private bookingService: BookingService, private authService: AuthService) { }
 
   ngOnInit(): void {
-    if (!this.authService.currentUser?.email) {
-      this.router.navigate(['/register-passenger'])
-    }
-
     this.bookingService.listBooking({ email: this.authService.currentUser?.email ?? '' }).subscribe(r => this.bookings = r, this.handleError)
   }
 
@@ -36,6 +31,9 @@ export class MyBookingsComponent implements OnInit {
       passengerEmail: booking.passengerEmail
     };
 
-    this.bookingService.cancelBooking({ body: dto }).subscribe(_ => this.bookings.filter(b => b != booking), this.handleError);
+    this.bookingService.cancelBooking({ body: dto })
+      .subscribe(_ =>
+        this.bookings.filter(b => b != booking),
+        this.handleError);
   }
 }
