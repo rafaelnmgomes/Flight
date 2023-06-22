@@ -19,6 +19,7 @@ namespace Flight.Data
 
             modelBuilder.Entity<FlightInfo>().OwnsOne(f => f.Departure);
             modelBuilder.Entity<FlightInfo>().OwnsOne(f => f.Arrival);
+            modelBuilder.Entity<FlightInfo>().OwnsMany(f => f.Bookings);
 
         }
 
