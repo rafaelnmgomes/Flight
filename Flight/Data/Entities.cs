@@ -14,6 +14,9 @@ namespace Flight.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Passenger>().HasKey(p => p.Email);
+
+            modelBuilder.Entity<FlightInfo>().Property(p => p.RemainingNumberOfSeats).IsConcurrencyToken();
+
             modelBuilder.Entity<FlightInfo>().OwnsOne(f => f.Departure);
             modelBuilder.Entity<FlightInfo>().OwnsOne(f => f.Arrival);
 

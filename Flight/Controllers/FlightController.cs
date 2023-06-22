@@ -1,10 +1,9 @@
-﻿using System;
-using Flight.ReadModels;
-using Flight.Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
-using Flight.Dtos;
+﻿using Flight.Data;
 using Flight.Domain.Errors;
-using Flight.Data;
+using Flight.Dtos;
+using Flight.ReadModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Flight.Controllers
 {
@@ -80,7 +79,15 @@ namespace Flight.Controllers
             if (error is OverbookError)
                 return Conflict(new { message = "Not enough seats" });
 
-            _entities.SaveChanges();
+            try
+            {
+                _entities.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return Conflict(new { message = "An error occured while booking please try again" });
+            }
+
 
             return CreatedAtAction(nameof(Find), new { id = dto.FlightId });
         }
