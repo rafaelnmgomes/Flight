@@ -7,8 +7,8 @@ using Flight.Data;
 
 namespace Flight.Controllers
 {
-    [Route("[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class PassengerController : ControllerBase
     {
         private readonly Entities _entities;
