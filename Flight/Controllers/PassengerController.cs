@@ -30,6 +30,9 @@ namespace Flight.Controllers
                 dto.LastName,
                 dto.Gender
                 ));
+
+            _entities.SaveChanges();
+
             return CreatedAtAction(nameof(Find), new { email = dto.Email });
         }
 

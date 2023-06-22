@@ -1,12 +1,23 @@
-﻿using System;
-using Flight.Domain.Entities;
+﻿using Flight.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Flight.Data
 {
-    public class Entities
+    public class Entities : DbContext
     {
-        public IList<Passenger> Passengers = new List<Passenger>();
+        public DbSet<Passenger> Passengers => Set<Passenger>();
 
-        public List<FlightInfo> Flights = new List<FlightInfo>();
+        public DbSet<FlightInfo> Flights => Set<FlightInfo>();
+
+        public Entities(DbContextOptions<Entities> options) : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Passenger>().HasKey(p => p.Email);
+            modelBuilder.Entity<FlightInfo>().OwnsOne(f => f.Departure);
+            modelBuilder.Entity<FlightInfo>().OwnsOne(f => f.Arrival);
+
+        }
+
     }
 }

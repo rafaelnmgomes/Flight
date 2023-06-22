@@ -1,8 +1,11 @@
 using Microsoft.OpenApi.Models;
 using Flight.Data;
 using Flight.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<Entities>(options => options.UseInMemoryDatabase(databaseName: "Flights"), ServiceLifetime.Singleton);
 
 // Add services to the container.
 
@@ -78,6 +81,8 @@ FlightInfo[] flights = new FlightInfo[]
 };
 
 entities.Flights.AddRange(flights);
+
+entities.SaveChanges();
 
 app.UseCors(builder => builder
     .WithOrigins("*")
